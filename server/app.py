@@ -1,16 +1,22 @@
-#!/usr/bin/env python3
+from flask import jsonify, make_response
+from config import app, db
+from models import User, UserProduct, Brand, Product
 
-# Standard library imports
+@app.route("/")
+def hello():
+    return jsonify(message="hello")
 
-# Remote library imports
-from flask import request
-from flask_restful import Resource
+@app.route('/users', methods = ['GET'])
+def users():
+    users = User.query.all()
+    users_dict = [user.to_dict() for user in users]
 
-# Local imports
-from config import app, db, api
-from models import User, Recipe
+    response = make_response(
+        jsonify(users_dict),
+        200
+    )
 
-# Views go here!
+    return response
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
