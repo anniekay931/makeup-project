@@ -42,6 +42,7 @@ class Product(db.Model, SerializerMixin):
     __tablename__ = 'products'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
+    price = db.Column(db.Float)
     image = db.Column(db.String)
     brand_id = db.Column(db.Integer, db.ForeignKey('brands.id'))
     category = db.Column(db.String)

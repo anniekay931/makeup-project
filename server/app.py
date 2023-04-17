@@ -92,7 +92,6 @@ def get_user(id):
 
 # 4. PUT: Update a user by ID
 @app.route('/users/<int:id>', methods = ['PUT'])
-@jwt_required()
 def userById(id):
     user = User.query.filter_by(id = id).first()
 
@@ -122,7 +121,6 @@ def userById(id):
 
 # 5. DELETE: Delete a user by ID
 @app.route('/users/<int:id>', methods = ['DELETE'])
-@jwt_required()
 def delete_user(id):
     user = User.query.filter_by(id = id).first()
 
@@ -161,7 +159,6 @@ def get_brands():
 
 # 2. POST: Create a new brand
 @app.route('/brands', methods = ['POST'])
-@jwt_required()
 def create_brand():
     data = request.get_json()
 
@@ -353,7 +350,6 @@ def productById(id):
 
 # 5. DELETE: Delete a product by ID
 @app.route('/products/<int:id>', methods = ['DELETE'])
-@jwt_required()
 def delete_product(id):
     product = Product.query.filter_by(id = id).first()
 
