@@ -270,12 +270,13 @@ def get_products():
 
 # 2. POST: Create a new product
 @app.route('/products', methods = ['POST'])
-@jwt_required()
 def create_product():
     data = request.get_json()
 
     new_product = Product(
       name=data['name'],
+      image=data['image'],
+      price=data['price'],
       category=data['category'],
       description=data['description'],
       brand_id=data['brand_id']
@@ -318,21 +319,27 @@ def get_product(id):
 
 # 4. PUT: Update a product by ID
 @app.route('/products/<int:id>', methods = ['PUT'])
-@jwt_required()
 def productById(id):
-    product = Product.query.filter_by(id = id).first()
+    product = Product.query.get(id)
 
     if product:
 
         data = request.get_json()
 
+        print("Before update:", product)
         product.name = data['name']
+
+        product.name = data['name']
+        product.image = data['image']
+        product.brand_id = data['brand_id']
         product.category = data['category']
         product.description = data['description']
         product.price = data['price']
-        product.brand_id = data['brand_id']
+        
 
         db.session.commit()
+
+        print("After update:", product)
 
         response = make_response(
             jsonify(product.to_dict()),
@@ -387,20 +394,23 @@ def get_user_products():
 
     return response
 
-# 2. POST: Create a new user_product
+# 2. POST: Create new user_products
 @app.route('/user_products', methods=['POST'])
-def create_user_product():
+def create_user_products():
     try:
         data = request.get_json()
-        new_user_product = UserProduct(
-            user_id=data['user_id'],
-            product_id=data['product_id'],
-            step_id=data['step_id']
-        )
-        db.session.add(new_user_product)
+        new_user_products = []
+        for item in data:
+            new_user_product = UserProduct(
+                user_id=item['user_id'],
+                product_id=item['product_id'],
+                step_id=item['step_id']
+            )
+            db.session.add(new_user_product)
+            new_user_products.append(new_user_product)
         db.session.commit()
-        user_product_dict = new_user_product.to_dict()
-        response = make_response(jsonify(user_product_dict), 201)
+        user_products_dict = [user_product.to_dict() for user_product in new_user_products]
+        response = make_response(jsonify(user_products_dict), 201)
         return response
     except TypeError as e:
         error_dict = {"error": "Invalid data format. Please provide user_id, product_id, and step_id as integers."}
@@ -442,6 +452,7 @@ def user_productById(id):
         user_product.user_id = data['user_id']
         user_product.product_id = data['product_id']
         user_product.step_id = data['step_id']
+        user_product.image = data['image']
 
         db.session.commit()
 

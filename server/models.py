@@ -47,8 +47,6 @@ class Product(db.Model, SerializerMixin):
     brand_id = db.Column(db.Integer, db.ForeignKey('brands.id'))
     category = db.Column(db.String)
     description = db.Column(db.String)
-    created_at = db.Column(db.DateTime, server_default=db.func.now())
-    updated_at = db.Column(db.DateTime, onupdate=db.func.now())
 
     user_products = db.relationship('UserProduct', backref = 'product')
 
@@ -62,5 +60,3 @@ class UserProduct(db.Model, SerializerMixin):
     product_id = db.Column(db.Integer, db.ForeignKey('products.id'))
     step_id = db.Column(db.Integer)
     image = db.Column(db.String)
-    created_at = db.Column(db.DateTime, server_default=db.func.now())
-    updated_at = db.Column(db.DateTime, onupdate=db.func.now())
