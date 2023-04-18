@@ -203,7 +203,6 @@ def get_brand(id):
 
 # 4. PUT: Update a brand by ID
 @app.route('/brands/<int:id>', methods = ['PUT'])
-@jwt_required()
 def brandById(id):
     brand = Brand.query.filter_by(id = id).first()
 
@@ -231,7 +230,6 @@ def brandById(id):
 
 # 5. DELETE: Delete a brand by ID
 @app.route('/brands/<int:id>', methods = ['DELETE'])
-@jwt_required()
 def delete_brand(id):
     brand = Brand.query.filter_by(id = id).first()
 
@@ -275,8 +273,6 @@ def create_product():
 
     new_product = Product(
       name=data['name'],
-      image=data['image'],
-      price=data['price'],
       category=data['category'],
       description=data['description'],
       brand_id=data['brand_id']
@@ -317,7 +313,6 @@ def get_product(id):
 
     return response
 
-# 4. PUT: Update a product by ID
 @app.route('/products/<int:id>', methods = ['PUT'])
 def productById(id):
     product = Product.query.get(id)
@@ -328,14 +323,10 @@ def productById(id):
 
         print("Before update:", product)
         product.name = data['name']
-
-        product.name = data['name']
         product.image = data['image']
         product.brand_id = data['brand_id']
-        product.category = data['category']
         product.description = data['description']
         product.price = data['price']
-        
 
         db.session.commit()
 
