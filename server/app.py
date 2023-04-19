@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, make_response, request
+from flask import Flask, jsonify, make_response, request, json
 from config import app, db, jwt
 from models import User, UserProduct, Brand, Product
 from flask_jwt_extended import (
@@ -22,7 +22,7 @@ def login():
     user = User.query.filter_by(username=data['username']).first()
     if user and user.password == data['password']:
         access_token = create_access_token(identity=user.id)
-        return jsonify(access_token=access_token), 200
+        return jsonify(access_token=access_token, user=user.to_dict()), 200
     else:
         return jsonify(
             {'error': 'Invalid username or password'},
@@ -119,29 +119,6 @@ def userById(id):
         
     return response
 
-# 5. DELETE: Delete a user by ID
-@app.route('/users/<int:id>', methods = ['DELETE'])
-def delete_user(id):
-    user = User.query.filter_by(id = id).first()
-
-    if user:
-
-        db.session.delete(user)
-        db.session.commit()
-
-        response = make_response(
-            {},
-            200
-        )
-    else:
-
-        response = make_response(
-            {'error': 'User not found'},
-            404
-        )
-
-    return response
-
 # BRAND ENDPOINTS
 
 # 1. GET: Retrieves all brands
@@ -154,100 +131,6 @@ def get_brands():
         jsonify(brands_dict),
         200
     )
-
-    return response
-
-# 2. POST: Create a new brand
-@app.route('/brands', methods = ['POST'])
-def create_brand():
-    data = request.get_json()
-
-    new_brand = Brand(
-      name=data['name']
-    )
-
-    db.session.add(new_brand)
-    db.session.commit()
-
-    brand_dict = new_brand.to_dict()
-
-    response = make_response(
-        jsonify(brand_dict),
-        201
-    )
-
-    return response
-
-# 3. GET: Retrieve a signle brand by ID
-@app.route('/brands/<int:id>', methods = ['GET'])
-def get_brand(id):
-    brand = Brand.query.filter_by(id=id).first()
-
-    if brand:
-
-        brand_dict = brand.to_dict()
-
-        response = make_response(
-            jsonify(brand_dict),
-            200
-        )
-
-    else:
-
-        response = make_response(
-            {'error': 'Brand not found'},
-            404
-        )
-
-    return response
-
-# 4. PUT: Update a brand by ID
-@app.route('/brands/<int:id>', methods = ['PUT'])
-def brandById(id):
-    brand = Brand.query.filter_by(id = id).first()
-
-    if brand:
-
-        data = request.get_json()
-
-        brand.name = data['name']
-
-        db.session.commit()
-
-        response = make_response(
-            jsonify(brand.to_dict()),
-            200
-            )
-        
-    else:
-
-        response = make_response(
-            {'error': 'Brand not found'},
-            404
-        )
-        
-    return response
-
-# 5. DELETE: Delete a brand by ID
-@app.route('/brands/<int:id>', methods = ['DELETE'])
-def delete_brand(id):
-    brand = Brand.query.filter_by(id = id).first()
-
-    if brand:
-
-        db.session.delete(brand)
-        db.session.commit()
-
-        response = make_response(
-            {},
-            200
-        )
-    else:
-
-        response = make_response(
-            {'error': 'Brand not found'},
-            404
-        )
 
     return response
 
@@ -271,22 +154,32 @@ def get_products():
 def create_product():
     data = request.get_json()
 
-    new_product = Product(
-      name=data['name'],
-      category=data['category'],
-      description=data['description'],
-      brand_id=data['brand_id']
-    )
+    try:
+        new_product = Product(
+            name=data['name'],
+            category=data['category'],
+            description=data['description'],
+            price=data['price'],
+            brand_id=data['brand_id'], 
+            image=data['image']
+        )
 
-    db.session.add(new_product)
-    db.session.commit()
+        db.session.add(new_product)
+        db.session.commit()
 
-    product_dict = new_product.to_dict()
+        product_dict = new_product.to_dict()
 
-    response = make_response(
-        jsonify(product_dict),
-        201
-    )
+        response = make_response(
+            jsonify(product_dict),
+            201
+        )
+
+    except Exception as e:
+        print("Error:", str(e))
+        response = make_response(
+            {'error': str(e)},
+            400
+        )
 
     return response
 
@@ -318,33 +211,40 @@ def productById(id):
     product = Product.query.get(id)
 
     if product:
-
         data = request.get_json()
 
-        print("Before update:", product)
-        product.name = data['name']
-        product.image = data['image']
-        product.brand_id = data['brand_id']
-        product.description = data['description']
-        product.price = data['price']
+        try:
 
-        db.session.commit()
+            print("Before update:", product)
+            product.name = data['name']
+            product.image = data['image']
+            product.brand_id = data['brand_id']
+            product.description = data['description']
+            product.price = data['price']
 
-        print("After update:", product)
+            db.session.commit()
 
-        response = make_response(
-            jsonify(product.to_dict()),
-            200
+            print("After update:", product)
+
+            response = make_response(
+                jsonify(product.to_dict()),
+                200
+                )
+            
+        except Exception as e:
+            response = make_response(
+                {'error': str(e)},
+                400
             )
-        
-    else:
 
+    else:
         response = make_response(
             {'error': 'Product not found'},
             404
         )
-        
+    
     return response
+     
 
 # 5. DELETE: Delete a product by ID
 @app.route('/products/<int:id>', methods = ['DELETE'])
@@ -372,118 +272,60 @@ def delete_product(id):
 
 # USERPRODUCT ENDPOINTS
 
-# 1. GET: Retrieves all user_products
-@app.route('/user_products', methods = ['GET'])
-def get_user_products():
-    user_products = UserProduct.query.all()
-    user_products_dict = [user_product.to_dict() for user_product in user_products]
+@app.route('/routine', methods=['GET', 'POST', 'PUT', 'DELETE'])
+# @jwt_required()
+def handle_routine():
+    if request.method == 'GET':
+        # Retrieve all UserProduct entries for the logged-in user
+        user_id = 53
+        user_products = UserProduct.query.filter_by(user_id=user_id).all()
+        return jsonify([user_product.to_dict() for user_product in user_products])
 
-    response = make_response(
-        jsonify(user_products_dict),
-        200
-    )
-
-    return response
-
-# 2. POST: Create new user_products
-@app.route('/user_products', methods=['POST'])
-def create_user_products():
-    try:
+    if request.method == 'POST':
+        # Create a new UserProduct entry for the logged-in user
+        data = request.json
+        user_id = 53
         data = request.get_json()
-        new_user_products = []
-        for item in data:
-            new_user_product = UserProduct(
-                user_id=item['user_id'],
-                product_id=item['product_id'],
-                step_id=item['step_id']
-            )
-            db.session.add(new_user_product)
-            new_user_products.append(new_user_product)
+        new_user_product = UserProduct(user_id=user_id, product_id=data['product_id'], step_id=data['step_id'])
+        db.session.add(new_user_product)
         db.session.commit()
-        user_products_dict = [user_product.to_dict() for user_product in new_user_products]
-        response = make_response(jsonify(user_products_dict), 201)
-        return response
-    except TypeError as e:
-        error_dict = {"error": "Invalid data format. Please provide user_id, product_id, and step_id as integers."}
-        response = make_response(jsonify(error_dict), 400)
-        return response
+        return jsonify(new_user_product.to_dict()), 201
 
-# 3. GET: Retrieve a signle user_product by ID
-@app.route('/user_products/<int:id>', methods = ['GET'])
-def get_user_product(id):
-    user_product = UserProduct.query.filter_by(id=id).first()
-
-    if user_product:
-
-        user_product_dict = user_product.to_dict()
-
-        response = make_response(
-            jsonify(user_product_dict),
-            200
-        )
-
-    else:
-
-        response = make_response(
-            {'error': 'UserProduct not found'},
-            404
-        )
-
-    return response
-
-# 4. PUT: Update a user_product by ID
-@app.route('/user_products/<int:id>', methods = ['PUT'])
-def user_productById(id):
-    user_product = UserProduct.query.filter_by(id = id).first()
-
-    if user_product:
-
+    if request.method == 'PUT':
+        # Update an existing UserProduct entry for the logged-in user
         data = request.get_json()
+        user_product_id = data['id']
+        user_id = 53
+        user_product = UserProduct.query.filter_by(id=user_product_id, user_id=user_id).first()
 
-        user_product.user_id = data['user_id']
+        if not user_product:
+            return jsonify({"error": "UserProduct not found"}), 404
+
         user_product.product_id = data['product_id']
         user_product.step_id = data['step_id']
-        user_product.image = data['image']
-
         db.session.commit()
+        return jsonify(user_product.to_dict())
 
-        response = make_response(
-            jsonify(user_product.to_dict()),
-            200
-            )
-        
-    else:
+    if request.method == 'DELETE':
+        # Delete a UserProduct entry for the logged-in user
+        user_product_id = request.args.get('id')
+        user_id = 53
+        user_product = UserProduct.query.filter_by(id=user_product_id, user_id=user_id).first()
 
-        response = make_response(
-            {'error': 'UserProduct not found'},
-            404
-        )
-        
-    return response
-
-# 5. DELETE: Delete a user_product by ID
-@app.route('/user_products/<int:id>', methods = ['DELETE'])
-def delete_user_product(id):
-    user_product = UserProduct.query.filter_by(id = id).first()
-
-    if user_product:
+        if not user_product:
+            return jsonify({"error": "UserProduct not found"}), 404
 
         db.session.delete(user_product)
         db.session.commit()
-
-        response = make_response(
-            {},
-            200
-        )
-
-    else:
-
-        response = make_response(
-            {'error': 'UserProduct not found'},
-            404
-        )
-
-    return response
+        return jsonify({"message": "UserProduct deleted"}), 200
+    
+@app.errorhandler(Exception)
+def handle_exception(e):
+    response = {
+        'message': str(e),
+        'type': type(e).__name__
+    }
+    return jsonify(response), 500
 
 if __name__ == '__main__':
-    app.run(port=5555, debug=True)
+    app.run(port=5555, debug=True) 

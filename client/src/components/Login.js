@@ -1,13 +1,13 @@
-
- 
-
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useHistory } from "react-router-dom";
+import UserContext from "./UserContext";
+import Routine from "./Routine";
 
-function Login( {onLogin }) {
+function Login({user, products}) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const history = useHistory();
+  const { setUser } = useContext(UserContext);
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -21,10 +21,10 @@ function Login( {onLogin }) {
   
     if (response.ok) {
       const data = await response.json();
-      console.log(data); // Add this line to log the received data
+      console.log("User data", data.user); // Add this line to log the received data
       const accessToken = data.access_token;
       localStorage.setItem("accessToken", accessToken);
-      onLogin(data.user);
+      setUser(data.user);
       history.push("/");
     } else {
       console.error("Login failed");
@@ -57,6 +57,7 @@ function Login( {onLogin }) {
         <br />
         <button type="submit">Login</button>
       </form>
+      < Routine user={user} products={products}  />
     </div>
   );
 }

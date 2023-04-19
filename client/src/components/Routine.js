@@ -2,7 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 function Routine({ user, products }) {
+
   console.log('User:', user, 'Products:', products);
+
   const [routine, setRoutine] = useState([]);
   const [currentStep, setCurrentStep] = useState(1);
   const history = useHistory();
@@ -16,13 +18,19 @@ function Routine({ user, products }) {
   }, [user, products]);
   
   const addToRoutine = (e) => {
+    // if (!user) {
+    //  console.error("User is undefined.");
+    //  return;
+   // }
+    
     const productId = parseInt(e.target.value);
-    if (!user || !productId) {
-      console.error("User or product is undefined.");
+    console.log(e.target.value)
+    if (!productId) {
+      console.error("Product is undefined.");
       return;
     }
     const product = products.find((p) => p.id === productId);
-    console.log('Selected product:', product); // Added console.log
+    console.log('Selected product:', product);
     const updatedProduct = { ...product, user_id: user.id, step: currentStep };
     setRoutine([...routine, updatedProduct]);
   };
@@ -33,12 +41,18 @@ function Routine({ user, products }) {
       user_id: parseInt(user_id),
       step_id: parseInt(step),
     }));
+
+    // const accessToken = localStorage.getItem('accessToken');
+
     console.log("Data to send:", dataToSend);
     console.log('Routine data:', routine); // Added console.log
 
-    fetch('/user_products', {
+    fetch('/routine', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+       // 'Authorization': `Bearer ${accessToken}`
+      },
       body: JSON.stringify(dataToSend),
     })
       .then((response) => response.json())

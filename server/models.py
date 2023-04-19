@@ -50,6 +50,13 @@ class Product(db.Model, SerializerMixin):
 
     user_products = db.relationship('UserProduct', backref = 'product')
 
+    @validates('price')
+    def validates_price(self, key, price):
+        price = float(price)
+        if price < 0 or price > 1000000:
+            raise ValueError('Must have a price between 1 and 1000000')
+        return price
+
 class UserProduct(db.Model, SerializerMixin):
     __tablename__ = 'user_products'
 

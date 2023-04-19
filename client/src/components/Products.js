@@ -60,7 +60,7 @@ function Products() {
 
   // Filter products based on search term
   const productsToShow = products.filter((product) =>
-    product.name.toLowerCase().includes(searchTerm.toLowerCase())
+    product.name && product.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (

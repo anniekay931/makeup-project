@@ -1,6 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
+import UserContext from "./UserContext";
+import AddUserProduct from "./AddUserProduct";
 
-function UserProducts({ user }) {
+function UserProducts() {
+  const { user } = useContext(UserContext);
   const [userProducts, setUserProducts] = useState([]);
 
   useEffect(() => {
@@ -11,9 +14,16 @@ function UserProducts({ user }) {
     }
   }, [user]);
 
+  console.log("User in UserProducts", user);
+
+  const handleUserProductAdded = (userProduct) => {
+    setUserProducts((prevUserProducts) => [...prevUserProducts, userProduct]);
+  };
+
 return (
   <div>
     <h1>Your Saved Routines</h1>
+    {user && <AddUserProduct onUserProductAdded={(newUserProducts) => setUserProducts([...userProducts, ...newUserProducts])} />}
     <ul>
       {userProducts.map((userProduct, index) => (
         <li key={index}>

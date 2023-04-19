@@ -10,6 +10,7 @@ import SavedRoutine from "./SavedRoutine";
 import Login from "./Login";
 import Navbar from "./Navbar";
 import ProductDetails from "./ProductDetails";
+import UserContext from "./UserContext";
 
 
 function App() {
@@ -25,22 +26,24 @@ function App() {
   return (
     <div>
       <Navbar user={user} />
-      <Switch>
-        <Route exact path='/' component={Home} />
-        <Route path='/users' component={Users} />
-        <Route path='/brands' component={Brands} />
-        <Route path='/products/:productId' component={ProductDetails} />
-        <Route path='/products' component={Products} />
-        <Route path='/user_products' component={UserProducts} />
-        <Route path='/routine'>
-          <Routine products={products} />
-        </Route>
-        <Route path='/saved-routine' component={SavedRoutine} />
-        <Route path='/login'>
-          <Login onLogin={setUser} />
-          </Route> 
-      </Switch>
-    </div>
+        <UserContext.Provider value={{ user, setUser }} >
+          <Switch>
+            <Route exact path='/' component={Home} />
+            <Route path='/users' component={Users} />
+            <Route path='/brands' component={Brands} />
+            <Route path='/products/:productId' component={ProductDetails} />
+            <Route path='/products' component={Products} />
+            <Route path='/user_products' component={UserProducts} />
+            <Route path='/routine'>
+              <Routine user={user} products={products} />
+            </Route>
+            <Route path='/saved-routine' component={SavedRoutine} />
+            <Route path='/login'>
+            <Login/>
+           </Route> 
+       </Switch>
+       </UserContext.Provider>
+      </div>
   );
 }
 

@@ -16,6 +16,8 @@ function ProductDetails({ match }) {
     setUpdatedProduct({ ...updatedProduct, [event.target.name]: event.target.value });
   };
 
+  console.log(updatedProduct)
+
   const updateProduct = () => {
     fetch(`/products/${product.id}`, {
       method: 'PUT',
