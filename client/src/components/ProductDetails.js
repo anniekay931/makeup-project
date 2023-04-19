@@ -19,6 +19,11 @@ function ProductDetails({ match }) {
   console.log(updatedProduct)
 
   const updateProduct = () => {
+    if (!product || !product.id) {
+      console.error("Product or product ID is undefined");
+      return;
+    }
+
     fetch(`/products/${product.id}`, {
       method: 'PUT',
       headers: {
@@ -105,7 +110,7 @@ function ProductDetails({ match }) {
           <p>Description: {product.description}</p>
           <p>Price: ${product.price}</p>
           {/* Display other product properties */}
-          <button onClick={() => setIsEditing(true)}>Edit</button>
+         <button onClick={() => { setIsEditing(true); setUpdatedProduct(product); }}>Edit</button>
         </div>
       )}
       <button onClick={deleteProduct}>Delete</button>

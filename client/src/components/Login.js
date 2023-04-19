@@ -1,7 +1,6 @@
 import React, { useState, useContext } from "react";
 import { useHistory } from "react-router-dom";
 import UserContext from "./UserContext";
-import Routine from "./Routine";
 
 function Login({user, products}) {
   const [username, setUsername] = useState("");
@@ -57,7 +56,6 @@ function Login({user, products}) {
         <br />
         <button type="submit">Login</button>
       </form>
-      < Routine user={user} products={products}  />
     </div>
   );
 }

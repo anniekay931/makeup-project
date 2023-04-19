@@ -39,7 +39,7 @@ function App() {
             </Route>
             <Route path='/saved-routine' component={SavedRoutine} />
             <Route path='/login'>
-            <Login/>
+            <Login user={user} products={products}/>
            </Route> 
        </Switch>
        </UserContext.Provider>
