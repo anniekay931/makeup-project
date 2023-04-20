@@ -3,6 +3,28 @@ import { Container, Typography, TextField, Button, Box, Grid, CardMedia } from '
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { styled } from '@mui/system';
+
+const Background = styled('div')({
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  width: '100%',
+  height: '100%',
+  backgroundImage: 'url(https://images.pexels.com/photos/5706026/pexels-photo-5706026.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2)',
+  backgroundPosition: 'center',
+  backgroundRepeat: 'no-repeat',
+  backgroundSize: 'cover',
+  zIndex: -1,
+});
+
+const BorderContainer = styled(Container)({
+  border: '2px solid #F08080',
+  borderRadius: '15px',
+  padding: '2rem',
+  marginTop: '2rem',
+  backgroundColor: 'white', // Add white background to the border container
+});
 
 function ProductDetails({ match }) {
   console.log('Product details component loaded');
@@ -57,7 +79,10 @@ function ProductDetails({ match }) {
   }
 
   return (
-    <Container maxWidth="md" sx={{ marginTop: '2rem', backgroundColor: '#ffe5e5', minHeight: '100vh', }} >
+    <>
+      <Background />
+      <BorderContainer maxWidth="md">
+        <Container maxWidth="md" style={{ marginTop: '2rem' }}>
       {isEditing ? (
         <Box>
           <TextField
@@ -156,8 +181,10 @@ function ProductDetails({ match }) {
         </Box>
       </Box>
     )}
-  </Container>
-);
+        </Container>
+      </BorderContainer>
+    </>
+  );
 }
 
 export default ProductDetails;
