@@ -219,6 +219,7 @@ def productById(id):
             product.name = data['name']
             product.image = data['image']
             product.brand_id = data['brand_id']
+            product.category = data['category']
             product.description = data['description']
             product.price = data['price']
 

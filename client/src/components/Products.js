@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import ProductCard from './ProductCard';
-import { Link } from 'react-router-dom';
+import { Container, Grid, Typography, TextField, Button, Box } from '@mui/material';
 
 function Products() {
   const [products, setProducts] = useState([]);
@@ -64,65 +64,86 @@ function Products() {
   );
 
   return (
-    <div>
-      <h1>Products</h1>
-      <input
-        type="text"
-        placeholder="Search products"
-        value={searchTerm}
-        onChange={handleSearchTermChange}
-      />
+    <Container maxWidth="md" style={{ marginTop: '2rem' }}>
+      <Typography variant="h2" align="center" gutterBottom>
+        Products
+      </Typography>
+      <Box mb={4} display="flex" justifyContent="center">
+        <TextField
+          label="Search products"
+          value={searchTerm}
+          onChange={handleSearchTermChange}
+          variant="outlined"
+          style={{ width: '50%' }}
+        />
+      </Box>
       <form onSubmit={addProduct}>
-        <input
-          type="text"
-          name="name"
-          placeholder="Product name"
-          value={newProduct.name}
-          onChange={handleNewProductChange}
-        />
-        <input
-          type="text"
-          name="description"
-          placeholder="Product description"
-          value={newProduct.description}
-          onChange={handleNewProductChange}
-        />
-        <input
-          type="number"
-          name="price"
-          placeholder="Product price"
-          value={newProduct.price}
-          onChange={handleNewProductChange}
-        />
-        <input
-          type="text"
-          name="image"
-          placeholder="Product image URL"
-          value={newProduct.image}
-          onChange={handleNewProductChange}
-        />
-        <input
-          type="text"
-          name="category"
-          placeholder="Product category"
-          value={newProduct.category}
-          onChange={handleNewProductChange}
-        />
-          <input
-          type="number"
-          name="brand_id"
-          placeholder="Product Brand ID"
-          value={newProduct.brand_id}
-          onChange={handleNewProductChange}
-        />
-        <button>Add Product</button>
-    </form>
-    <div className="product-list">
-  {productsToShow.map((product) => (
-    <ProductCard key={product.id} product={product} onDelete={deleteProduct} />
-  ))}
-</div>
-    </div>
+        <Box mb={2} display="flex" justifyContent="space-around" flexWrap="wrap">
+          <TextField
+            label="Product name"
+            name="name"
+            value={newProduct.name}
+            onChange={handleNewProductChange}
+            variant="outlined"
+            style={{ width: '30%', marginBottom: '1rem' }}
+          />
+          <TextField
+            label="Product description"
+            name="description"
+            value={newProduct.description}
+            onChange={handleNewProductChange}
+            variant="outlined"
+            style={{ width: '30%', marginBottom: '1rem' }}
+          />
+          <TextField
+            label="Product price"
+            name="price"
+            value={newProduct.price}
+            onChange={handleNewProductChange}
+            variant="outlined"
+            type="number"
+            style={{ width: '30%', marginBottom: '1rem' }}
+          />
+          <TextField
+            label="Product image URL"
+            name="image"
+            value={newProduct.image}
+            onChange={handleNewProductChange}
+            variant="outlined"
+            style={{ width: '30%', marginBottom: '1rem' }}
+          />
+          <TextField
+            label="Product category"
+            name="category"
+            value={newProduct.category}
+            onChange={handleNewProductChange}
+            variant="outlined"
+            style={{ width: '30%', marginBottom: '1rem' }}
+          />
+          <TextField
+            label="Product Brand ID"
+            name="brand_id"
+            value={newProduct.brand_id}
+            onChange={handleNewProductChange}
+            variant="outlined"
+            type="number"
+            style={{ width: '30%', marginBottom: '1rem' }}
+          />
+        </Box>
+        <Box mb={4} display="flex" justifyContent="center">
+          <Button variant="contained" color="primary" type="submit">
+            Add Product
+          </Button>
+        </Box>
+      </form>
+      <Grid container spacing={4}>
+        {productsToShow.map((product) => (
+          <Grid item key={product.id} xs={12} sm={6} md={4}>
+            <ProductCard key={product.id} product={product} onDelete={deleteProduct} />
+          </Grid>
+        ))}
+      </Grid>
+    </Container>
   );
 }
 

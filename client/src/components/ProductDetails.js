@@ -1,4 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { Container, Typography, TextField, Button, Box, Grid, CardMedia } from '@mui/material';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 function ProductDetails({ match }) {
   console.log('Product details component loaded');
@@ -53,69 +57,108 @@ function ProductDetails({ match }) {
   }
 
   return (
-    <div>
+    <Container maxWidth="md" sx={{ marginTop: '2rem', backgroundColor: '#ffe5e5', minHeight: '100vh', }} >
       {isEditing ? (
-        <div>
-          <input
-            type="text"
+        <Box>
+          <TextField
+            label="Product Name"
             name="name"
-            placeholder="Product Name"
-            defaultValue={product.name}
+            value={updatedProduct.name}
             onChange={handleInputChange}
+            variant="outlined"
+            fullWidth
           />
-           <input
-            type="text"
+          <TextField
+            label="Product Image URL"
             name="image"
-            placeholder="Product Image URL"
-            defaultValue={product.image}
+            value={updatedProduct.image}
             onChange={handleInputChange}
+            variant="outlined"
+            fullWidth
           />
-           <input
-            type="text"
+          <TextField
+            label="Product Description"
             name="description"
-            placeholder="Product Description"
-            defaultValue={product.description}
+            value={updatedProduct.description}
             onChange={handleInputChange}
+            variant="outlined"
+            fullWidth
           />
-           <input
-            type="text"
+          <TextField
+            label="Product Category"
             name="category"
-            placeholder="Product Category"
-            defaultValue={product.category}
+            value={updatedProduct.category}
             onChange={handleInputChange}
+            variant="outlined"
+            fullWidth
           />
-           <input
-            type="number"
+          <TextField
+            label="Product Brand ID"
             name="brand_id"
-            placeholder="Product Brand ID"
-            defaultValue={product.brand_id}
+            value={updatedProduct.brand_id}
             onChange={handleInputChange}
+            variant="outlined"
+            fullWidth
           />
-           <input
-            type="number"
+          <TextField
+            label="Product Price"
             name="price"
-            placeholder="Product Price"
-            defaultValue={product.price}
+            value={updatedProduct.price}
             onChange={handleInputChange}
+            variant="outlined"
+            fullWidth
           />
-          {/* Add more input fields for other properties */}
-          <button onClick={updateProduct}>Save</button>
-        </div>
+          {/* Add more TextField components for other properties */}
+          <img
+            src={product.image}
+            alt={product.name}
+            sx={{
+              maxWidth: '100%',
+              maxHeight: '300px',
+            }}
+          />
+          <Box mt={2} display="flex" justifyContent="space-between">
+            <Button variant="contained" color="primary" onClick={updateProduct}>
+              Save
+            </Button>
+            <Button variant="outlined" color="secondary" onClick={() => setIsEditing(false)}>
+              Cancel
+            </Button>
+          </Box>
+        </Box>
       ) : (
-        <div>
-          <h1>{product.name}</h1>
-          <img src={product.image} alt={product.name} />
-          <p>Brand ID: {product.brand_id}</p>
-          <p>Category: {product.category}</p>
-          <p>Description: {product.description}</p>
-          <p>Price: ${product.price}</p>
-          {/* Display other product properties */}
-         <button onClick={() => { setIsEditing(true); setUpdatedProduct(product); }}>Edit</button>
-        </div>
-      )}
-      <button onClick={deleteProduct}>Delete</button>
-    </div>
-  );
+<Box>
+        <Typography variant="h4" color="textSecondary">
+          {product.name}
+        </Typography>
+        <img
+          src={product.image}
+          alt={product.name}
+          sx={{
+            display: 'block',
+            maxWidth: '100%',
+            maxHeight: '300px',
+            margin: '1rem 0',
+          }}
+        />
+        <Typography color="textSecondary">Brand ID: {product.brand_id}</Typography>
+        <Typography color="textSecondary">Category: {product.category}</Typography>
+        <Typography color="textSecondary">Description: {product.description}</Typography>
+        <Typography color="textSecondary">Price: ${product.price}</Typography>
+        {/* Display other product properties */}
+        <Box mt={2} display="flex" justifyContent="space-between">
+            <Button variant="contained" color="primary" startIcon={<EditIcon />} onClick={() => setIsEditing(true)}>
+              Edit
+            </Button>
+            <Button variant="contained" color="secondary" startIcon={<DeleteIcon />} onClick={deleteProduct}>
+              Delete
+            </Button>
+        </Box>
+      </Box>
+    )}
+  </Container>
+);
 }
 
 export default ProductDetails;
+

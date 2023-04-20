@@ -1,8 +1,9 @@
 import React, { useState, useContext } from "react";
 import { useHistory } from "react-router-dom";
 import UserContext from "./UserContext";
+import { TextField, Button, Grid, Paper, Typography, Container, Box } from '@mui/material';
 
-function Login({user, products}) {
+function Login({ user, products }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const history = useHistory();
@@ -17,10 +18,10 @@ function Login({user, products}) {
       },
       body: JSON.stringify({ username, password }),
     });
-  
+
     if (response.ok) {
       const data = await response.json();
-      console.log("User data", data.user); // Add this line to log the received data
+      console.log("User data", data.user);
       const accessToken = data.access_token;
       localStorage.setItem("accessToken", accessToken);
       setUser(data.user);
@@ -29,34 +30,45 @@ function Login({user, products}) {
       console.error("Login failed");
     }
   };
-  
+
   return (
-    <div>
-      <h1>Login</h1>
+    <Container maxWidth="xs" sx={{ marginTop: '2rem', backgroundColor: '#f5f5f5', borderRadius: '1rem', padding: '2rem' }}>
+      <Typography variant="h4" align="center">
+        Login
+      </Typography>
       <form onSubmit={handleLogin}>
-        <label htmlFor="username">Username:</label>
-        <input
-          type="text"
-          id="username"
-          name="username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          required
-        />
-        <br />
-        <label htmlFor="password">Password:</label>
-        <input
-          type="password"
-          id="password"
-          name="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <br />
-        <button type="submit">Login</button>
+        <Box my={2}>
+          <TextField
+            label="Username"
+            id="username"
+            name="username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            variant="outlined"
+            fullWidth
+            required
+          />
+        </Box>
+        <Box my={2}>
+          <TextField
+            label="Password"
+            type="password"
+            id="password"
+            name="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            variant="outlined"
+            fullWidth
+            required
+          />
+        </Box>
+        <Box my={2}>
+          <Button type="submit" variant="contained" color="primary" fullWidth>
+            Login
+          </Button>
+        </Box>
       </form>
-    </div>
+    </Container>
   );
 }
 
